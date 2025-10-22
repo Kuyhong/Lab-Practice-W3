@@ -1,5 +1,4 @@
-// Challenge A3/csll.cpp
-
+// Challenge A3/sll.cpp
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -19,49 +18,54 @@ public:
     }
 };
 
-class CSLL {
+class SLL {
 private:
     Node* head;
     int size;
 
 public:
-    CSLL() : head(nullptr), size(0) {}
+    SLL() : head(nullptr), size(0) {}
 
     void append(int val) {
         Node* n = new Node(val);
-        if (!head) {
-            head = n;
-            n->next = head;
-        } else {
+        if (!head) head = n;
+        else {
             Node* temp = head;
-            while (temp->next != head)
+            while (temp->next)
                 temp = temp->next;
             temp->next = n;
-            n->next = head;
         }
         size++;
     }
 
     void rotateRight(int k) {
-        if (!head || k == 0 || size == 0) return;
-        k = k % size;
+        if (!head || k == 0) return;
+        int len = 1;
+        Node* tail = head;
+        while (tail->next) {
+            tail = tail->next;
+            len++;
+        }
+
+        k = k % len;
         if (k == 0) return;
 
-        int moveSteps = size - k;
-        Node* tail = head;
-        for (int i = 0; i < moveSteps - 1; i++)
-            tail = tail->next;
+        Node* newTail = head;
+        for (int i = 1; i < len - k; ++i)
+            newTail = newTail->next;
 
-        head = tail->next;
+        Node* newHead = newTail->next;
+        newTail->next = nullptr;
+        tail->next = head;
+        head = newHead;
     }
 
     void print() {
-        if (!head) return;
         Node* temp = head;
-        do {
+        while (temp) {
             cout << temp->value << " ";
             temp = temp->next;
-        } while (temp != head);
+        }
         cout << endl;
     }
 };
@@ -70,15 +74,15 @@ int main() {
     const int n = 10;
     vector<int> testKs = {1, n / 2, n - 1};
 
-    CSLL list;
+    SLL list;
     for (int i = 1; i <= n; ++i)
         list.append(i);
 
-    cout << "Original CSLL: ";
+    cout << "Original SLL: ";
     list.print();
 
     for (int k : testKs) {
-        CSLL test = list; 
+        SLL test = list; 
         auto start = high_resolution_clock::now();
         test.rotateRight(k);
         auto stop = high_resolution_clock::now();
