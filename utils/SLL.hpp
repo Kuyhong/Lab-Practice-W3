@@ -1,149 +1,184 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 9174eb4e4deb94c6e6543ae8d0a492054dea3034
-// Singly and doubly linked list utilities for benchmarks
 #ifndef SLL_HPP
 #define SLL_HPP
+#include "node.hpp"
 
-#include <string>
-#include <chrono>
-#include <iostream>
-
-struct SLLNode {
-    int val;
-    SLLNode* next;
-    SLLNode(int v) : val(v), next(nullptr) {}
-};
-
-struct SLL_HeadOnly {
-    SLLNode* head = nullptr;
-
-    void push_front(int v) {
-        SLLNode* node = new SLLNode(v);
-        node->next = head;
-        head = node;
+//A5
+class SLL_HeadOnly {
+    Node* head = nullptr;
+    int n = 0;
+    
+    void push_Front(int value){
+        Node* nNode = new Node(value, nullptr, nullptr);
+        nNode->next = head;
+        head = nNode;
+        n++;
     }
 
-    void pop_front() {
-        if (!head) return;
-        SLLNode* tmp = head;
-        head = head->next;
-        delete tmp;
+    void pop_Front(){
+        if (head == nullptr){
+            return;
+        }
+        Node* temp = head;
+        head = temp->next;
+        delete temp;
+        n--;
     }
 
-    void push_back(int v) {
-        SLLNode* node = new SLLNode(v);
-        if (!head) { head = node; return; }
-        SLLNode* cur = head;
-        while (cur->next) cur = cur->next;   // O(n)
-        cur->next = node;
+    void push_Back(int value){
+        Node* nNode = new Node(value, nullptr, nullptr);
+        if (head == nullptr){
+            nNode->next = head;
+            head = nNode;
+            n++;
+            return;
+        }
+        Node* current = head;
+        while (current->next != nullptr){
+            current = current->next;
+        }
+        current->next = nNode;
+        n++;
     }
 
-    void pop_back() {
-        if (!head) return;
-        if (!head->next) { delete head; head = nullptr; return; }
-        SLLNode* cur = head;
-        while (cur->next->next) cur = cur->next;  // O(n)
-        delete cur->next;
-        cur->next = nullptr;
-    }
-};
+    void pop_Back(){
+        if (head == nullptr){
+            return;
+        }
 
-struct SLL_HeadTail {
-    SLLNode* head = nullptr;
-    SLLNode* tail = nullptr;
-
-    void push_front(int v) {
-        SLLNode* node = new SLLNode(v);
-        if (!head) head = tail = node;
-        else { node->next = head; head = node; }
-    }
-
-    void pop_front() {
-        if (!head) return;
-        SLLNode* tmp = head;
-        head = head->next;
-        if (!head) tail = nullptr;
-        delete tmp;
-    }
-
-    void push_back(int v) {
-        SLLNode* node = new SLLNode(v);
-        if (!tail) head = tail = node;
-        else { tail->next = node; tail = node; }
-    }
-
-    void pop_back() {
-        if (!head) return;
-        if (head == tail) { delete head; head = tail = nullptr; return; }
-        SLLNode* cur = head;
-        while (cur->next != tail) cur = cur->next;
-        delete tail;
-        tail = cur;
-        tail->next = nullptr;
+        if (head->next == nullptr){
+            delete head;
+            head = nullptr;
+            n--;
+            return;
+        }
+        Node* current = head;
+        while (current->next->next != nullptr){
+            current = current->next;
+        }
+        Node* temp = current->next;
+        current->next = nullptr;
+        delete temp;
+        n--;
     }
 };
 
-struct DLLNode {
-    int val;
-    DLLNode* next;
-    DLLNode* prev;
-    DLLNode(int v) : val(v), next(nullptr), prev(nullptr) {}
+class SLL_HeadTail {
+    Node* tail = nullptr;
+    Node* head = nullptr;
+    int n = 0;
+
+    void push_Front(int value){
+        Node* nNode = new Node(value, nullptr, nullptr);
+        if (head == nullptr){
+            head = tail = nNode;
+        } else {
+            nNode->next = head;
+            head = nNode;
+        }
+        n++;
+    }
+
+    void pop_Front(){
+        Node* temp = head;
+        if (head == nullptr){
+            return;
+        }
+        if (head == tail){
+            tail = nullptr;
+            head = nullptr;
+            delete temp;
+        } else {
+            head = temp->next;
+            delete temp;
+        }
+        n--;
+    }
+
+    void push_Back(int value){
+        Node* nNode = new Node(value, nullptr, nullptr);
+        if (head == nullptr){
+            head = tail = nNode;
+        } else {
+            tail->next = nNode;
+            tail = nNode; 
+        }
+    }
+
+    void pop_Back(){
+        if (head == nullptr){
+            return;
+        } else if (head == tail){
+            delete head;
+            head = nullptr;
+            tail = nullptr;
+        } else {
+            Node* current = head;
+            while (current->next->next != nullptr){
+                current = current->next;
+            }
+            current->next = nullptr;
+            delete tail;
+            tail = current;
+        }
+        n--;
+    }
 };
 
-struct DLL_HeadTail {
-    DLLNode* head = nullptr;
-    DLLNode* tail = nullptr;
+class DLL_HeadTail {
+    public:
+    Node* head = nullptr;
+    Node* tail = nullptr;
+    int n = 0;
 
-    void push_front(int v) {
-        DLLNode* node = new DLLNode(v);
-        node->next = head;
-        if (head) head->prev = node;
-        else tail = node;
-        head = node;
+    void push_Front(int value) {
+        Node* nNode = new Node(value, nullptr, nullptr);
+        if (head == nullptr) {
+            head = tail = nNode;
+        } else {
+            head->prev = nNode;
+            nNode->next = head;
+            nNode->prev = nullptr;
+            head = nNode;
+        }
+        n++;
     }
 
-    void pop_front() {
-        if (!head) return;
-        DLLNode* tmp = head;
-        head = head->next;
-        if (head) head->prev = nullptr;
-        else tail = nullptr;
-        delete tmp;
+    void pop_Front() {
+        if (head == nullptr) return;
+        Node* temp = head;
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            head->prev = nullptr;
+        }
+        delete temp;
+        n--;
     }
 
-    void push_back(int v) {
-        DLLNode* node = new DLLNode(v);
-        node->prev = tail;
-        if (tail) tail->next = node;
-        else head = node;
-        tail = node;
+    void push_Back(int value) {
+        Node* nNode = new Node(value, nullptr, nullptr);
+        if (tail == nullptr) {
+            head = tail = nNode;
+        } else {
+            tail->next = nNode;
+            nNode->prev = tail;
+            tail = nNode;
+        }
+        n++;
     }
 
-    void pop_back() {
-        if (!tail) return;
-        DLLNode* tmp = tail;
-        tail = tail->prev;
-        if (tail) tail->next = nullptr;
-        else head = nullptr;
-        delete tmp;
+    void pop_Back() {
+        if (tail == nullptr) return;
+        Node* temp = tail;
+        if (head == tail) {
+            head = tail = nullptr;
+        } else {
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
+        delete temp;
+        n--;
     }
 };
-
-template<typename List>
-void benchmark(const std::string& name, List& list, int N) {
-    auto t1 = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < N; i++) list.push_back(i);
-    for (int i = 0; i < N; i++) list.pop_back();
-    auto t2 = std::chrono::high_resolution_clock::now();
-    std::cout << name << ": " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms\n";
-}
-
-#endif // SLL_HPP
-<<<<<<< HEAD
-=======
-
->>>>>>> 82157a5e40422b9489d714ca7fd930c10a492bd2
-=======
->>>>>>> 9174eb4e4deb94c6e6543ae8d0a492054dea3034
+#endif 
