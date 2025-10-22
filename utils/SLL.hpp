@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Singly and doubly linked list utilities for benchmarks
 #ifndef SLL_HPP
 #define SLL_HPP
@@ -137,3 +138,6 @@ void benchmark(const std::string& name, List& list, int N) {
 }
 
 #endif // SLL_HPP
+=======
+
+>>>>>>> 82157a5e40422b9489d714ca7fd930c10a492bd2
