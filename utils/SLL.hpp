@@ -1,9 +1,11 @@
+// Singly and doubly linked list utilities for benchmarks
 #ifndef SLL_HPP
 #define SLL_HPP
 
-// ==============================
-// (i) Singly Linked List — head only
-// ==============================
+#include <string>
+#include <chrono>
+#include <iostream>
+
 struct SLLNode {
     int val;
     SLLNode* next;
@@ -44,9 +46,6 @@ struct SLL_HeadOnly {
     }
 };
 
-// ==============================
-// (ii) Singly Linked List — head + tail
-// ==============================
 struct SLL_HeadTail {
     SLLNode* head = nullptr;
     SLLNode* tail = nullptr;
@@ -82,9 +81,6 @@ struct SLL_HeadTail {
     }
 };
 
-// ==============================
-// (iii) Doubly Linked List — head + tail
-// ==============================
 struct DLLNode {
     int val;
     DLLNode* next;
@@ -130,5 +126,14 @@ struct DLL_HeadTail {
         delete tmp;
     }
 };
+
+template<typename List>
+void benchmark(const std::string& name, List& list, int N) {
+    auto t1 = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < N; i++) list.push_back(i);
+    for (int i = 0; i < N; i++) list.pop_back();
+    auto t2 = std::chrono::high_resolution_clock::now();
+    std::cout << name << ": " << std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count() << " ms\n";
+}
 
 #endif // SLL_HPP
