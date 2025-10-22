@@ -18,58 +18,6 @@ public:
     }
 };
 
-class SLL {
-private:
-    Node* head;
-    int size;
-
-public:
-    SLL() : head(nullptr), size(0) {}
-
-    void append(int val) {
-        Node* n = new Node(val);
-        if (!head) head = n;
-        else {
-            Node* temp = head;
-            while (temp->next)
-                temp = temp->next;
-            temp->next = n;
-        }
-        size++;
-    }
-
-    void rotateRight(int k) {
-        if (!head || k == 0) return;
-        int len = 1;
-        Node* tail = head;
-        while (tail->next) {
-            tail = tail->next;
-            len++;
-        }
-
-        k = k % len;
-        if (k == 0) return;
-
-        Node* newTail = head;
-        for (int i = 1; i < len - k; ++i)
-            newTail = newTail->next;
-
-        Node* newHead = newTail->next;
-        newTail->next = nullptr;
-        tail->next = head;
-        head = newHead;
-    }
-
-    void print() {
-        Node* temp = head;
-        while (temp) {
-            cout << temp->value << " ";
-            temp = temp->next;
-        }
-        cout << endl;
-    }
-};
-
 int main() {
     const int n = 10;
     vector<int> testKs = {1, n / 2, n - 1};

@@ -25,7 +25,10 @@ private:
     int size;
 
 public:
-    CSLL() : head(nullptr), size(0) {}
+    CSLL (Node* head, int size){
+        this->head = head;
+        this->size = size;
+    }
 
     void append(int val) {
         Node* n = new Node(val);
@@ -70,7 +73,7 @@ int main() {
     const int n = 10;
     vector<int> testKs = {1, n / 2, n - 1};
 
-    CSLL list;
+    CSLL list (nullptr, n);
     for (int i = 1; i <= n; ++i)
         list.append(i);
 
